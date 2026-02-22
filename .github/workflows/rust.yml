@@ -14,16 +14,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Check for deprecated artifact actions
+      - name: Install actionlint
         run: |
-          if grep -rE 'upload-artifact@v[123]\b|upload-pages-artifact@v[12]\b' .github/workflows/; then
-            echo "::error::Workflow uses deprecated artifact action. Use upload-artifact@v4+ and upload-pages-artifact@v4+ (see https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/)"
-            exit 1
+          VERSION="v1.7.11"
+          curl -sSfL "https://github.com/rhysd/actionlint/releases/download/${VERSION}/actionlint_${VERSION#v}_linux_amd64.tar.gz" | tar xz
+          if [ -f actionlint ]; then
+            sudo mv actionlint /usr/local/bin/
+          else
+            sudo mv actionlint_*/actionlint /usr/local/bin/
           fi
       - name: Run actionlint
-        uses: eifinger/actionlint-action@v1
-        with:
-          version: "v1.7.11"
+        run: actionlint
 
   build:
     needs: lint
