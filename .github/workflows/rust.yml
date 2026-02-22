@@ -10,7 +10,23 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check for deprecated artifact actions
+        run: |
+          if grep -rE 'upload-artifact@v[123]\b|upload-pages-artifact@v[12]\b' .github/workflows/; then
+            echo "::error::Workflow uses deprecated artifact action. Use upload-artifact@v4+ and upload-pages-artifact@v4+ (see https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/)"
+            exit 1
+          fi
+      - name: Run actionlint
+        uses: eifinger/actionlint-action@v1
+        with:
+          version: "v1.7.11"
+
   build:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -27,9 +43,9 @@ jobs:
       run: cd client && trunk build --release
 
     - name: Setup Pages
-      uses: actions/configure-pages@v3
+      uses: actions/configure-pages@v4
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v1
+      uses: actions/upload-pages-artifact@v4
       with:
         path: "./client/dist"
 
@@ -37,6 +53,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       pages: write
       id-token: write
     environment:
@@ -45,4 +62,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
