@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Pre-push hook: lint GitHub Actions workflows so broken or deprecated usage is caught before push.
+set -e
+
+cd "$(git rev-parse --show-toplevel)"
+
+echo "Running workflow checks (actionlint + deprecated artifact check)..."
+
+# 1. Check for deprecated artifact actions (same as CI)
+if grep -rE 'upload-artifact@v[123]\b|upload-pages-artifact@v[12]\b' .github/workflows/ 2>/dev/null; then
+  echo "::error::Workflow uses deprecated artifact action. Use upload-artifact@v4+ and upload-pages-artifact@v4+ (see https://github.blog/changelog/2024-04-16-deprecation-notice-v3-of-the-artifact-actions/)" >&2
+  exit 1
+fi
+
+# 2. Run actionlint (must be installed: brew install actionlint, or go install github.com/rhysd/actionlint/cmd/actionlint@latest)
+if ! command -v actionlint >/dev/null 2>&1; then
+  echo "actionlint is not installed. Install with: brew install actionlint" >&2
+  echo "Or: go install github.com/rhysd/actionlint/cmd/actionlint@latest" >&2
+  exit 1
+fi
+actionlint
+
+echo "Workflow checks passed."

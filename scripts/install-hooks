@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Configure this repo to use the project's Git hooks (.githooks).
+# Run once after clone: ./scripts/install-hooks
+set -e
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+git config core.hooksPath .githooks
+echo "Git hooks enabled. Hooks path set to .githooks"
+echo "List hooks: ./scripts/list-hooks"

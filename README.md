@@ -9,3 +9,18 @@ cargo run
 ```bash
 trunk serve
 ```
+
+### Git Hooks
+
+This repo uses Git hooks to run checks before you push (e.g. lint GitHub Actions workflows so deprecated or invalid usage is caught locally).
+
+- **Enable hooks** (run once after clone): `./scripts/install-hooks`  
+  This sets `core.hooksPath` to `.githooks` so the project’s hooks run instead of your global/default ones.
+- **List enabled hooks**: `./scripts/list-hooks`  
+  Shows the hooks directory and which hook scripts are present (e.g. `pre-push`).
+
+The **pre-push** hook runs [actionlint](https://github.com/rhysd/actionlint) and a deprecated-artifact check. Install actionlint with:
+
+```bash
+brew install actionlint
+```

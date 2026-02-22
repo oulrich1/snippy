@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# List Git hooks that are enabled for this repo (hooks path and hook names).
+set -e
+
+root=$(git rev-parse --show-toplevel)
+cd "$root"
+
+hooks_path=$(git config core.hooksPath || true)
+if [ -z "$hooks_path" ]; then
+  hooks_path=".git/hooks"
+  echo "Using default hooks directory: .git/hooks (project hooks not enabled)"
+else
+  # Resolve relative path from repo root
+  if [[ "$hooks_path" != /* ]]; then
+    hooks_path="$root/$hooks_path"
+  fi
+  echo "Hooks path (core.hooksPath): $hooks_path"
+fi
+
+if [ ! -d "$hooks_path" ]; then
+  echo "No hooks directory found."
+  exit 0
+fi
+
+echo ""
+echo "Hooks:"
+for f in "$hooks_path"/*; do
+  [ -f "$f" ] || continue
+  [ -x "$f" ] && echo "  - $(basename "$f") (executable)" || echo "  - $(basename "$f") (not executable)"
+done
+exit 0
