@@ -34,12 +34,13 @@ jobs:
     - name: Install Trunk
       uses: jetli/trunk-action@v0.4.0
       with:
-        # Optional version of trunk to install(eg. 'v0.16.0', 'latest')
         version: "latest"
     - name: Add wasm target
-      run: |
-        rustup target add wasm32-unknown-unknown
-
+      run: rustup target add wasm32-unknown-unknown
+    - name: Cache Rust/cargo (client)
+      uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: client
     - name: Build the Rust WASM app and all of its assets
       run: cd client && trunk build --release
 
