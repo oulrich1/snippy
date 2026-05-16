@@ -25,3 +25,6 @@ server/target/
 
 # Local research / scrape outputs (see scripts/research_scrape.py)
 scraped/
+
+# Personal ideas backlog (local only)
+TODO.md
