@@ -20,5 +20,8 @@ client/.env
 server/target/
 # server/Config.toml
 
+# macOS folder metadata (never commit)
+.DS_Store
+
 # Local research / scrape outputs (see scripts/research_scrape.py)
 scraped/
