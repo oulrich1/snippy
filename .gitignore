@@ -19,3 +19,6 @@ client/target/
 client/.env
 server/target/
 # server/Config.toml
+
+# Local research / scrape outputs (see scripts/research_scrape.py)
+scraped/
