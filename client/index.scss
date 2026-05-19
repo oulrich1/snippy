@@ -352,3 +352,131 @@ code {
     justify-content: flex-start;
   }
 }
+
+/* ---------- Per-letter effects (see client/effects.js) ----------
+   Words wrap as units; individual characters become inline-block boxes
+   so they can transform, fade, and recolor without breaking layout. */
+
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.ch {
+  display: inline-block;
+  will-change: transform, color, opacity, filter;
+  transform-origin: center 60%;
+  transition: color 0.18s ease;
+}
+
+.ch--scrambling {
+  color: var(--accent);
+  text-shadow: 0 0 6px rgba(94, 234, 212, 0.35);
+}
+
+.ch--jitter {
+  animation: chJitter 0.28s ease;
+  color: var(--accent);
+}
+
+@keyframes chJitter {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  25%  { transform: translate(-1px, -3px) rotate(-8deg); }
+  50%  { transform: translate(2px, 1px) rotate(6deg); }
+  75%  { transform: translate(-1px, 2px) rotate(-4deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.ch--wave {
+  animation: chWave 0.42s ease;
+  color: #9cf5e8;
+  text-shadow: 0 0 10px rgba(94, 234, 212, 0.4);
+}
+
+@keyframes chWave {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-5px); color: var(--accent); }
+  100% { transform: translateY(0); }
+}
+
+.ch--burning {
+  animation: chBurn 0.7s cubic-bezier(0.4, 0, 0.6, 1) forwards;
+}
+
+@keyframes chBurn {
+  0% {
+    color: #ffd089;
+    text-shadow: 0 0 6px #ff8e3c, 0 0 14px #ff5c1f;
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 1;
+    filter: blur(0);
+  }
+  35% {
+    color: #ff4d2e;
+    text-shadow: 0 0 10px #ff2c00, 0 0 20px #b81c00;
+    transform: translate(calc(var(--burn-dx, 0px) * 0.4), -3px) rotate(calc(var(--burn-rot, 0deg) * 0.4)) scale(1.05);
+    opacity: 0.95;
+    filter: blur(0);
+  }
+  70% {
+    color: #6b1a0c;
+    text-shadow: 0 0 6px #4a0f06;
+    transform: translate(calc(var(--burn-dx, 0px) * 0.85), calc(var(--burn-dy, -18px) * 0.7)) rotate(var(--burn-rot, 12deg)) scale(0.75);
+    opacity: 0.55;
+    filter: blur(1px);
+  }
+  100% {
+    color: #1b0e0a;
+    text-shadow: none;
+    transform: translate(var(--burn-dx, 0px), var(--burn-dy, -22px)) rotate(var(--burn-rot, 20deg)) scale(0.35);
+    opacity: 0;
+    filter: blur(3px);
+  }
+}
+
+.ember-wrap {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.ember {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-block;
+  color: #ffd089;
+  text-shadow: 0 0 8px #ff5b1f, 0 0 14px #ff2200;
+  animation: emberFly var(--life, 900ms) ease-out forwards;
+  will-change: transform, opacity, color;
+}
+
+@keyframes emberFly {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+    color: #fff1c2;
+  }
+  55% {
+    color: #ff4d2e;
+    opacity: 0.95;
+  }
+  100% {
+    transform: translate(var(--dx, 0px), var(--dy, -60px)) scale(0.4);
+    opacity: 0;
+    color: #1b0e0a;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ch--scrambling,
+  .ch--jitter,
+  .ch--wave,
+  .ch--burning {
+    animation: none !important;
+    transform: none !important;
+  }
+}
